@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Playground</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/codemirror.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Code Playground</h1>
+    <textarea id="codeArea">// === TYPE YOUR NAME HERE ===</textarea><br>
+    <button onclick="runCode()">Run</button>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.10/mode/javascript/javascript.min.js"></script>
+  
+  <script>
+    const editor = CodeMirror.fromTextArea(document.getElementById('codeArea'), {
+      lineNumbers: true,
+      mode: "javascript",
+      theme: "default",
+      indentUnit: 2,
+      smartIndent: true,
+      tabSize: 2,
+    });
+
+    async function runCode() {
+      const code = editor.getValue();
+
+      try {
+        const response = await fetch('https://27fef1812e01.ngrok.app/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+
+        const result = await response.json();
+        document.getElementById('output').textContent = result.message;
+      } catch (error) {
+        document.getElementById('output').textContent = `Error: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
